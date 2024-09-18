@@ -51,6 +51,7 @@ Abaixo está um exemplo simples de como implementar um **produtor** e um **consu
 
 ```bash
 npm install kafkajs
+```
 
 
 Esse exemplo básico de **produtor** e **consumidor** em **Node.js** utilizando `kafkajs` demonstra como o Kafka pode ser integrado para enviar e consumir mensagens em um cluster Kafka.
