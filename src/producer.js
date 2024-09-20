@@ -1,6 +1,5 @@
 const { Kafka } = require('kafkajs');
 
-// Criando uma instância do Kafka
 const kafka = new Kafka({
   clientId: 'my-app',
   brokers: ['54.234.172.231:9092'],
