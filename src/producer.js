@@ -3,7 +3,7 @@ const { Kafka } = require('kafkajs');
 // Criando uma instância do Kafka
 const kafka = new Kafka({
   clientId: 'my-app',
-  brokers: ['localhost:9092'],
+  brokers: ['54.234.172.231:9092'],
 });
 
 const producer = kafka.producer();
@@ -14,7 +14,7 @@ const runProducer = async () => {
   await producer.send({
     topic: 'test-topic',
     messages: [
-      { value: 'Olá Kafka!' },
+      { value: 'Ta ai nessa tchaianagem ein candango!!!' },
     ],
   });
 
