@@ -18,9 +18,8 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_METRIC_REPORTERS: ""                # Desabilita reportes de métricas
-      JMX_PORT: -1                              # Desabilita JMX (Java Management Extensions)
-      CONFLUENT_SUPPORT_METRICS_ENABLE: "false" # Desabilita métricas da Confluent
+      KAFKA_METRIC_REPORTERS: ""
+      CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
 
   production:
     build: .
