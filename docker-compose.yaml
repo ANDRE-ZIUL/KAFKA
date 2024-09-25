@@ -13,7 +13,6 @@ services:
     depends_on:
       - zookeeper
     environment:
-      KAFKA_HOST: kafka
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
@@ -23,7 +22,6 @@ services:
       CONFLUENT_SUPPORT_METRICS_ENABLE: 'false'
     ports:
       - "9092:9092"
-    command: ["/bin/sh", "-c", "kafka-topics --create --zookeeper zookeeper:2181 --replication-factor 1 --partitions 1 --topic chat-topic && kafka-server-start /etc/kafka/server.properties"]
 
   node-app:
     build: .
@@ -36,3 +34,9 @@ services:
     volumes:
       - .:/usr/src/app
     command: ["node", "src/server.js"]
+
+  kafka-setup:
+    image: confluentinc/cp-enterprise-kafka:5.1.2
+    depends_on:
+      - kafka
+    entrypoint: ["/bin/sh", "-c", "sleep 20 && kafka-topics --create --zookeeper zookeeper:2181 --replication-factor 1 --partitions 1 --topic chat-topic"]
