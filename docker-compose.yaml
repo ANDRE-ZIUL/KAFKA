@@ -22,6 +22,7 @@ services:
       CONFLUENT_SUPPORT_METRICS_ENABLE: 'false'
     ports:
       - "9092:9092"
+    command: ["/bin/sh", "-c", "kafka-topics --create --zookeeper zookeeper:2181 --replication-factor 1 --partitions 1 --topic chat-topic && kafka-server-start /etc/kafka/server.properties"]
 
   node-app:
     build: .
