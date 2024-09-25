@@ -1,8 +1,8 @@
-const { Kafka } = require('kafkajs');
+import { Kafka } from 'kafkajs';
 
 const kafka = new Kafka({
   clientId: 'my-app',
-  brokers: ['54.234.172.231:9092'],
+  brokers: ['34.202.166.249:9092'],
 });
 
 const producer = kafka.producer();

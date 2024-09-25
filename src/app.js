@@ -1,5 +1,8 @@
 import cors from 'cors';
 import dotenv from 'dotenv';
+import express from 'express';
+import MessageController from './controllers/MessageController';
+import messageRoutes from './routes/messageRoutes';
 dotenv.config();
 
 class App {
@@ -7,6 +10,8 @@ class App {
     this.app = express();
     this.middlewares();
     this.routes();
+    MessageController.connectConsumer();
+    MessageController.connectProducer();
   }
 
   middlewares() {
@@ -16,7 +21,7 @@ class App {
   }
 
   routes() {
-    this.app.use('/messages/', userRoutes);
+    this.app.use('/messages/', messageRoutes);
   }
 }
 
