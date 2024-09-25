@@ -1,5 +1,5 @@
-import kafka from 'kafka-node';
-import MessagingService from '../interface/messagingService';
+const kafka = require('kafka-node');
+const MessagingService = require('../interface/messagingService');
 
 class KafkaAdapter extends MessagingService {
   constructor(kafkaHost) {

@@ -1,7 +1,7 @@
-import express from 'express';
-import http from 'http';
-import socketIO from 'socket.io';
-import KafkaAdapter from './adapter/kafkaAdapter';
+const express = require('express');
+const http = require('http');
+const socketIO = require('socket.io');
+const KafkaAdapter = require('./adapter/kafkaAdapter');
 
 // Inicializa o KafkaAdapter
 const kafkaAdapter = new KafkaAdapter('localhost:9092');
