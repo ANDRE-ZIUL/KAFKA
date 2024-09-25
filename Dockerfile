@@ -1,9 +1,6 @@
 # Usando imagem do Node.js
 FROM node:18
 
-# Criando diretório de trabalho
-WORKDIR /app
-
 # Copiando package.json e package-lock.json
 COPY package*.json ./
 
