@@ -44,7 +44,7 @@ kafkaAdapter.producer.on('error', (err) => {
 });
 
 // Iniciar servidor
-const port = 5000
+const port = 3000
 server.listen(port, () => {
   console.log(`Servidor rodando na porta ${port}`);
 });
