@@ -4,7 +4,7 @@ const socketIO = require('socket.io');
 const KafkaAdapter = require('./adapter/kafkaAdapter');
 
 // Inicializa o KafkaAdapter
-const kafkaAdapter = new KafkaAdapter('localhost:9092');
+const kafkaAdapter = new KafkaAdapter('35.172.194.229:9092');
 
 // Configuração do Express e Socket.io
 const app = express();
