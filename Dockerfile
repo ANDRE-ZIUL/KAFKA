@@ -1,20 +1,20 @@
-# Utilizando a imagem base do Node.js
+# Usando imagem do Node.js
 FROM node:18
 
-# Criar diretório de trabalho
-WORKDIR /usr/src/app
+# Criando diretório de trabalho
+WORKDIR /app
 
-# Copiar arquivos package.json e package-lock.json
+# Copiando package.json e package-lock.json
 COPY package*.json ./
 
-# Instalar dependências
+# Instalando as dependências
 RUN npm install
 
-# Copiar todo o código-fonte para o container
+# Copiando todo o código para o contêiner
 COPY . .
 
-# Expor a porta 3000 para acessar a aplicação
+# Expondo a porta 3000
 EXPOSE 3000
 
-# Comando para iniciar o servidor
+# Comando para rodar o aplicativo
 CMD ["node", "src/server.js"]

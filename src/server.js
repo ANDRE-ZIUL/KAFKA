@@ -1,50 +1,32 @@
 const express = require('express');
-const http = require('http');
-const socketIO = require('socket.io');
-const KafkaAdapter = require('./adapter/kafkaAdapter');
+const kafka = require('kafka-node');
 
-// Inicializa o KafkaAdapter
-const kafkaAdapter = new KafkaAdapter('35.172.194.229:9092');
-
-// Configuração do Express e Socket.io
 const app = express();
-const server = http.createServer(app);
-const io = socketIO(server);
+const port = 3000;
 
-const KAFKA_TOPIC = 'chat-topic';
+const client = new kafka.KafkaClient({ kafkaHost: process.env.KAFKA_BROKER });
+const producer = new kafka.Producer(client);
 
-// Quando o producer do Kafka estiver pronto
-kafkaAdapter.producer.on('ready', () => {
-  console.log('Kafka Producer está pronto.');
-
-  // Conectar usuários e enviar mensagens
-  io.on('connection', (socket) => {
-    console.log('Usuário conectado:', socket.id);
-
-    // Receber mensagens do cliente e enviar para o Kafka
-    socket.on('sendMessage', (message) => {
-      kafkaAdapter.sendMessage(KAFKA_TOPIC, message);
-    });
-
-    // Desconectar o usuário
-    socket.on('disconnect', () => {
-      console.log('Usuário desconectado:', socket.id);
-    });
-  });
-
-  // Consumir mensagens do Kafka e transmitir para os clientes
-  kafkaAdapter.consumeMessages(KAFKA_TOPIC, (chatMessage) => {
-    io.emit('receiveMessage', chatMessage);
+producer.on('ready', () => {
+  console.log('Producer está pronto');
+  const payloads = [{ topic: 'test', messages: 'Hello Kafka' }];
+  producer.send(payloads, (err, data) => {
+    if (err) {
+      console.error('Erro ao enviar mensagem', err);
+    } else {
+      console.log('Mensagem enviada:', data);
+    }
   });
 });
 
-// Tratamento de erros no Kafka Producer
-kafkaAdapter.producer.on('error', (err) => {
-  console.error('Erro no Kafka Producer:', err);
+producer.on('error', (err) => {
+  console.error('Erro no Producer:', err);
 });
 
-// Iniciar servidor
-const port = 3000
-server.listen(port, () => {
+app.get('/', (req, res) => {
+  res.send('Node.js com Kafka e Docker');
+});
+
+app.listen(port, () => {
   console.log(`Servidor rodando na porta ${port}`);
 });
