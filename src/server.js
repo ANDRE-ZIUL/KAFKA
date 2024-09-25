@@ -4,7 +4,7 @@ const kafka = require('kafka-node');
 const app = express();
 const port = 3000;
 
-const client = new kafka.KafkaClient({ kafkaHost: process.env.KAFKA_BROKER });
+const client = new kafka.KafkaClient({ kafkaHost: '107.21.137.193:9092' });
 const producer = new kafka.Producer(client);
 
 producer.on('ready', () => {
