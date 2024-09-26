@@ -1,33 +1,71 @@
 const express = require('express');
 const kafka = require('kafka-node');
+const { WebSocketServer } = require('ws');
 
 const app = express();
 const port = 3000;
 
 const client = new kafka.KafkaClient({ kafkaHost: '107.21.137.193:9092' });
 const producer = new kafka.Producer(client);
+const consumer = new kafka.Consumer(client, [{ topic: 'test' }], { autoCommit: true });
 
-producer.on('ready', () => {
-  console.log('Producer está pronto');
-  const payloads = [{ topic: 'test', messages: 'Hello Kafka' }];
-  producer.send(payloads, (err, data) => {
-    if (err) {
-      console.error('Erro ao enviar mensagem', err);
-    } else {
-      console.log('Mensagem enviada:', data);
-    }
+const wss = new WebSocketServer({ port: 8081 });
+
+const sendMessage = async (message) => {
+  const payloads = [{ topic: 'test', messages: message }];
+  return new Promise((resolve, reject) => {
+    producer.send(payloads, (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data);
+      }
+    });
   });
+};
+
+const consumeMessages = () => {
+  consumer.on('message', (message) => {
+    wss.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(message.value.toString());
+      }
+    });
+  });
+
+  consumer.on('error', (err) => {
+    console.error('Erro no consumidor:', err);
+  });
+};
+
+producer.on('ready', async () => {
+  try {
+    await sendMessage('Hello Kafka from producer!');
+  } catch (err) {
+    console.error('Erro ao enviar mensagem:', err);
+  }
 });
 
 producer.on('error', (err) => {
   console.error('Erro no Producer:', err);
 });
 
-app.get('/:message', (req, res) => {
-  const messages = [];
+client.connect();
+consumeMessages();
+
+wss.on('connection', (ws) => {
+  console.log('Cliente conectado');
+});
+
+app.get('/:message', async (req, res) => {
   const { message } = req.params;
-  messages.push(message)
-  res.send(messages);
+  try {
+    await sendMessage(message);
+    res.send('Mensagem enviada com sucesso!');
+  } catch (err) {
+    console.error('Erro ao enviar mensagem:', err);
+    res.status(500).send('Erro ao enviar mensagem');
+  }
 });
 
 app.listen(port, () => {
