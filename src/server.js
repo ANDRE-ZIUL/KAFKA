@@ -11,7 +11,7 @@ const kafka = new Kafka({
 });
 
 const producer = kafka.producer();
-const consumer = kafka.consumer({ groupId: 'my-consumer-group',  });
+const consumer = kafka.consumer({ groupId: 'my-consumer-group' }); // Removed extra comma
 
 const wss = new WebSocketServer({ port: 8081 });
 
@@ -51,19 +51,17 @@ const consumeMessages = async () => {
 
 const start = async () => {
   try {
-    await createTopic();
+    await createTopic(); // Create topic before starting consumer
     await consumeMessages();
   } catch (err) {
     console.error('Erro inicializando a aplicação:', err);
-    process.exit(1); // Exit on error
+    process.exit(1);
   }
 };
 
 start();
 
-producer.on('error', (err) => {
-  console.error('Erro no Producer:', err);
-});
+// Removed unnecessary producer error handler (handled within sendMessage)
 
 wss.on('connection', (ws) => {
   console.log('Cliente conectado');
