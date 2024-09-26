@@ -24,8 +24,10 @@ producer.on('error', (err) => {
 });
 
 app.get('/:message', (req, res) => {
+  const messages = [];
   const { message } = req.params;
-  res.send(message);
+  messages.push(message)
+  res.send(messages);
 });
 
 app.listen(port, () => {
