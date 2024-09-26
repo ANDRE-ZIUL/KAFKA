@@ -37,8 +37,8 @@ export default function Component() {
   const stressTest = () => {
     const message = "Teste de estresse";
 
-    for (let i = 0; i < 100; i++) {
-      sendMessages(message);
+    for (let i = 0; i < 1000000000; i++) {
+      sendMessages(message + i);
     }
   };
 
@@ -90,10 +90,13 @@ export default function Component() {
           </Button>
         </form>
       </div>
-      <div className="bg-red-100 border border-1 border-red-700 text-red-700 rounded-lg flex items-center gap-2 px-4 py-3 w-fit m-auto mb-4">
+      <button
+        className="bg-red-100 border border-1 border-red-700 text-red-700 rounded-lg flex items-center gap-2 px-4 py-3 w-fit m-auto mb-4"
+        onClick={() => stressTest()}
+      >
         <Bomb className="h-5 w-5" />
         <span className="font-medium">Capotar sistema</span>
-      </div>
+      </button>
     </div>
   );
 }
