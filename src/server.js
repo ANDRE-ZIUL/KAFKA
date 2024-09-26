@@ -1,30 +1,41 @@
 const express = require('express');
-const kafka = require('kafka-node');
+const { Kafka } = require('kafkajs');
 const { WebSocketServer } = require('ws');
 
 const app = express();
 const port = 3000;
 
-const client = new kafka.KafkaClient({ kafkaHost: '107.21.137.193:9092' });
-const producer = new kafka.Producer(client);
-const consumer = new kafka.Consumer(client, [{ topic: 'test' }], { autoCommit: true });
+const kafka = new Kafka({
+  clientId: 'my-app',
+  brokers: ['107.21.137.193:9092'],
+});
+
+const producer = kafka.producer();
+const consumer = kafka.consumer({ groupId: 'my-consumer-group',  });
 
 const wss = new WebSocketServer({ port: 8081 });
 
 const sendMessage = async (message) => {
   const payloads = [{ topic: 'test', messages: message }];
-  return new Promise((resolve, reject) => {
-    producer.send(payloads, (err, data) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(data);
-      }
-    });
-  });
+  return producer.send(payloads);
 };
 
-const consumeMessages = () => {
+const createTopic = async () => {
+  const admin = kafka.admin();
+  await admin.connect();
+
+  const newTopics = await admin.createTopics({
+    topics: [{ topic: 'test', numPartitions: 1, replicationFactor: 1 }],
+  });
+
+  console.log('Tópico criado com sucesso:', newTopics);
+  await admin.disconnect();
+};
+
+const consumeMessages = async () => {
+  await consumer.connect();
+  await consumer.subscribe({ topics: ['test'] });
+
   consumer.on('message', (message) => {
     wss.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
@@ -38,20 +49,21 @@ const consumeMessages = () => {
   });
 };
 
-producer.on('ready', async () => {
+const start = async () => {
   try {
-    await sendMessage('Hello Kafka from producer!');
+    await createTopic(); // Create the topic before starting
+    await consumeMessages();
   } catch (err) {
-    console.error('Erro ao enviar mensagem:', err);
+    console.error('Erro inicializando a aplicação:', err);
+    process.exit(1); // Exit on error
   }
-});
+};
+
+start(); // Call the start function
 
 producer.on('error', (err) => {
   console.error('Erro no Producer:', err);
 });
-
-client.connect();
-consumeMessages();
 
 wss.on('connection', (ws) => {
   console.log('Cliente conectado');
