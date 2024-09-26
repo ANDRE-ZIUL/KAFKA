@@ -23,8 +23,9 @@ producer.on('error', (err) => {
   console.error('Erro no Producer:', err);
 });
 
-app.get('/', (req, res) => {
-  res.send('Node.js com Kafka e Docker');
+app.get('/:message', (req, res) => {
+  const { message } = req.params;
+  res.send(message);
 });
 
 app.listen(port, () => {
