@@ -51,7 +51,7 @@ const consumeMessages = async () => {
 
 const start = async () => {
   try {
-    await createTopic(); // Create the topic before starting
+    await createTopic();
     await consumeMessages();
   } catch (err) {
     console.error('Erro inicializando a aplicação:', err);
@@ -59,7 +59,7 @@ const start = async () => {
   }
 };
 
-start(); // Call the start function
+start();
 
 producer.on('error', (err) => {
   console.error('Erro no Producer:', err);
